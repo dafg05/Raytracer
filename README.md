@@ -1,3 +1,6 @@
+# PROGRESS FOR FINAL PROJECT
+
+
 For the first draft, I've improved my ray tracer in the following ways:
 
 1. More modular code
