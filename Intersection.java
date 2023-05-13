@@ -3,6 +3,9 @@ public class Intersection implements Comparable<Intersection>{
 
 	protected Traceable object;
 	protected double t;
+	protected double u; // for barycentric coordinates
+	protected double v; // for barycentric coordinates
+	protected Point interPoint;
 
 	public Intersection(Traceable object, double t) {
 		this.object = object;
@@ -11,6 +14,14 @@ public class Intersection implements Comparable<Intersection>{
 
 	public String toString() {
 		return ""+object+"  "+t;
+	}
+	
+	public void setInterPoint(Ray r) {
+		this.interPoint = r.position(t);
+	}
+
+	public Point getInterPoint() {
+		return interPoint;
 	}
 
 	@Override

@@ -38,7 +38,6 @@ public class World {
 		System.out.println(s2);
 		s2.transform = Transformations.getTranslate(0, -8, -4);
 
-		// s2.transform = Transformations.getScale(0.5, 0.5, 0.5);
 		System.out.println(s2);
 
 		objects.add(s1);
@@ -49,8 +48,8 @@ public class World {
 	public Canvas render(String fileName, int hsize, int vsize, double size) {
 		Canvas cav = new Canvas(hsize, vsize);
 		cav.maxColorValue = 0;
-		Point center = new Point(0, 0, 5);
-		double sqrtRPP = 2; // sqrt(rays per pixel)
+		Point center = new Point(0, 0, 2);
+		double sqrtRPP = 1; // sqrt(rays per pixel)
 		for (int i = 0; i < hsize; i++) {
 			for (int j = 0; j < vsize; j++) {
 
@@ -87,28 +86,24 @@ public class World {
 	}
 
 	private MyColor computeColor(Ray r, int depth) {
-		// System.out.println("Ray:" + r);
 		Intersection inters = Traceable.hit(intersectWorld(r)); // nearest intersection
 		MyColor finalC = MyColor.Black;
 		if (inters != null) {
-			Point intersectionPoint = new Point(r.position(inters.t));
+			inters.setInterPoint(r);
 			for (LightSource ls : lightSources) {
 				// calculate light intensity
-				MyColor lightIntensity = ls.intensityAt(intersectionPoint, inters, this);
+				MyColor lightIntensity = ls.intensityAt(inters.interPoint, inters, this);
 				finalC = new MyColor(Tuple.add(finalC, lightIntensity));
 			}
 			finalC = new MyColor(Tuple.add(finalC, this.ambientColor));
-
 			// check if intersection object is reflective. If it is, recursively call
 			// newComputeColor to get reflective color and combine that with regular color
 			if (inters.object.material.reflective > 0 && depth < 3) {
-
 				double reflectionFactor = inters.object.material.reflective;
-				Ray reflectedRay = reflectRay(r, inters, intersectionPoint);
+				Ray reflectedRay = reflectRay(r, inters, inters.interPoint);
 				MyColor reflectColor = this.computeColor(reflectedRay, depth + 1);
 				finalC = new MyColor(Tuple.add(reflectColor.scale(reflectionFactor), finalC.scale(1 - reflectionFactor)));
 			}
-
 		}
 		return finalC;
 	}
@@ -156,10 +151,9 @@ public class World {
 
 	public static void main(String[] args) {
 		World w = new World();
-		// w.mySetup();
-		w.mirrors();
-		w.render("test102.ppm", 1000, 1000, 15);
-		// w.testReflection();
+		// w.mirrors();
+		w.teapot();
+		w.render("test102.ppm", 800, 800, 15);
 	}
 
 	public void mySetup() {
@@ -207,9 +201,15 @@ public class World {
 		add(ball);
 	}
 
-	public void testReflection(){
-		Ray og = new Ray(new Point(0,0,2), new Vector(0, 0, -1));
-		this.computeColor(og, 0);
+	public void teapot() {
+		OBJParser op = new OBJParser("teapot2.obj");
+		ArrayList<Traceable> teaPot = op.readFile();
+		for (Traceable tr : teaPot){
+			add(tr);
+		}
+		PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(0.0, 0.0, 3.0));
+		addLight(plight);
+
 	}
 
 	public void mirrors() {
@@ -231,7 +231,7 @@ public class World {
 		mirror1.material.diffuse = 0.7;
 		mirror1.material.specular = 0.0;
 		mirror1.material.ambient = 0.9;
-		mirror1.material.reflective = 0.5;
+		mirror1.material.reflective = 0.4;
 		add(mirror1);
 
 		Cube mirror2 = new Cube();
@@ -245,7 +245,7 @@ public class World {
 		mirror2.material.diffuse = 0.7;
 		mirror2.material.specular = 0.0;
 		mirror2.material.ambient = 0.9;
-		mirror2.material.reflective = 0.5;
+		mirror2.material.reflective = 0.4;
 		add(mirror2);
 
 
@@ -263,93 +263,9 @@ public class World {
 		add(ball);
 	
 	}
+
+	public void testReflection(){
+		Ray og = new Ray(new Point(0,0,2), new Vector(0, 0, -1));
+		this.computeColor(og, 0);
+	}
 }
-
-// CODE STORAGE
-
-// FADE EFFECT:
-// double zInter = direction.t[2] * inters.t;
-// if (zInter < fadeStart){ // note right_hand coordinate system
-// double voidFactor = 1 - ((zInter - fadeStart)/(voidThreshold - fadeStart));
-// if (voidFactor < 0) voidFactor = 0;
-// c = c.scale(voidFactor);
-// }
-
-// if (inters != null){
-// MyColor objectColor = inters.object.material.getColor(inters.t);
-// MyColor finalColor = objectColor;
-
-// if (lightSources.size() > 0){
-// // use the first light source for now
-// LightSource ls = lightSources.get(0);
-// Point intersectionPoint = new Point(r.position(inters.t));
-// Vector unitNormal = inters.object.normalAt(intersectionPoint,
-// inters).normalize();
-
-// // ambient term
-// MyColor ambColor = objectColor.scale(ambientCoefficient);
-
-// // calculate light intensity
-// Vector scaledNormal = unitNormal.scale(perturbation);
-// Point perturbedPoint = new Point(Tuple.add(intersectionPoint, scaledNormal));
-// MyColor intensity = ls.intensityAt(perturbedPoint, this); // use perturbed
-// point for shadow calculation
-
-// MyColor diffColor = new MyColor(0,0,0);
-
-// if (!ls.isShadowed(perturbedPoint, this)){
-// // diffuse term
-// Vector lightDirection = new Vector(Tuple.sub(ls.position,
-// intersectionPoint)).normalize();
-// double diffuseFactor = Tuple.dot(unitNormal, lightDirection) *
-// inters.object.material.diffuse;
-// if (diffuseFactor < 0) diffuseFactor = 0;
-// diffColor = new MyColor(Tuple.mult(objectColor.scale(diffuseFactor),
-// intensity));
-// }
-
-// finalColor = new MyColor(Tuple.add(ambColor, diffColor));
-// colors.add(finalColor);
-// }
-// }
-
-// double fadeStart = -1.5; // z coordinate where we start to fade
-// double voidThreshold = -3; // z coordinate in which everything is black
-
-// private MyColor computeColor(Ray r, Intersection inters, int depth){
-// MyColor finalC = new MyColor(0,0,0);
-
-// if (inters != null){
-// MyColor objectColor = inters.object.material.getColor(inters.t);
-
-// // ambient term gets factored in once!
-// MyColor ambColor = objectColor.scale(ambientCoefficient);
-// finalC = new MyColor(Tuple.add(finalC, ambColor));
-
-// Point intersectionPoint = new Point(r.position(inters.t));
-// Vector unitNormal = inters.object.normalAt(intersectionPoint,
-// inters).normalize();
-// Vector scaledNormal = unitNormal.scale(perturbation);
-// Point perturbedPoint = new Point(Tuple.add(intersectionPoint, scaledNormal));
-
-// for (LightSource ls : lightSources){
-// // calculate light intensity
-// MyColor intensity = ls.intensity; // use perturbed point for shadow
-// calculation
-// MyColor diffColor = new MyColor(0,0,0);
-// if (!LightSource.isShadowed(perturbedPoint, ls.position, this)){
-// // diffuse term
-// Vector lightDirection = new Vector(Tuple.sub(ls.position,
-// intersectionPoint)).normalize();
-// double diffuseFactor = Tuple.dot(unitNormal, lightDirection) *
-// inters.object.material.diffuse;
-// if (diffuseFactor > 0){
-// diffColor = new MyColor(Tuple.mult(objectColor.scale(diffuseFactor),
-// intensity));
-// }
-// }
-// finalC = new MyColor(Tuple.add(finalC, diffColor));
-// }
-// }
-// return finalC;
-// }
