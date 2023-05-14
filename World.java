@@ -153,7 +153,7 @@ public class World {
 		World w = new World();
 		// w.mirrors();
 		w.teapot();
-		w.render("test102.ppm", 500, 500, 15);
+		w.render("test102.ppm", 1000,1000, 10);
 	}
 
 	public void mySetup() {
@@ -203,24 +203,38 @@ public class World {
 
 	public void teapot() {
 		OBJParser op = new OBJParser("teapot2.obj");
-		ArrayList<Traceable> teaPot = op.readFile();
-		for (Traceable tr : teaPot){
-			add(tr);
+		ArrayList<Traceable> teaPotTraceables = op.readFile();
+
+		for (Traceable t : teaPotTraceables) {
+			t.material = new Material();
+			t.material.color = new MyColor(0.643, 0.729, 0.255);
+			t.material.diffuse = 0.7;
 		}
 
-		Sphere ball = new Sphere();
-		ball.transform = Matrices.mult(
-				Transformations.getTranslate(0, 0, 0),
-				Transformations.getScale(0.5, 0.5, 0.5));
-		ball.material = new Material();
-		ball.material.color = new MyColor(0, 1, 1);
-		ball.material.diffuse = 0.7;
-		ball.material.specular = 0.4;
-		ball.material.ambient = 0.6;
-		add(ball);
+		Group teapot = new Group(teaPotTraceables, new Sphere());
+		// teapot.setTransform(Transformations.getRotX(-Math.PI/2));
+		teapot.setTransform(Matrices.mult(
+			Transformations.getRotY(Math.PI/6),
+			Transformations.getRotX(-Math.PI/3)
+		));
+		add(teapot);
 
-		PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(0.0, 0.0, 3.0));
-		addLight(plight);
+		Cube back = new Cube();
+		back.transform = Matrices.mult(
+				Transformations.getTranslate(0.0, 0.0, -4.0),
+				Transformations.getScale(2.5, 2.5, 0.25));
+		back.material = new Material();
+		back.material.color = new MyColor(0.23, 0.11, 0.91);
+		back.material.diffuse = 0.7;
+
+		add(back);
+
+		// PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(-1.0, -1.0, 4.0));
+		// addLight(plight);
+
+		RectangularLight rlight = new RectangularLight(new MyColor(1.0, 1.0, 1.0), new Point(-0.5, -0.5, 4.0),
+				new Vector(-0.5, 0.0, 0), new Vector(0, -0.5, 0), 4, 4);
+		addLight(rlight);
 
 	}
 

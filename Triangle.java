@@ -20,7 +20,6 @@ public class Triangle extends Traceable {
 		normal = new Vector(Tuple.cross(edge1, edge2));
 
 		
-		
 	}
 
 	@Override
