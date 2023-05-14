@@ -19,4 +19,12 @@ A grid of lights used for soft shadows. For each cell in the grid, use a random 
 
 A recursive implementation of reflections, in which if our camera rays intersect a reflective object, recursively call compute color with reflected rays. (Question: should faraway objects be of different colors?)
 
+5. Triangles
+
+(TODO: talk more) implemented local_normal_at for smooth_triangle, got teapot (...) working with ray tracer
+
+6. Groups
+
+Implemented Group.java... Tested...
+
 
