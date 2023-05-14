@@ -7,6 +7,7 @@ public abstract class Traceable {
 
 	protected Matrices transform = Matrices.identity();
 	protected Material material = new Material();
+	protected Group parentGroup;
 
 	public ArrayList<Intersection> intersections(Ray r) { 
 		return this.local_intersect(r);
