@@ -4,22 +4,22 @@ import java.util.ArrayList;
 public class Group extends Traceable{
 
     private ArrayList<Traceable> children;
-    private Sphere boundSphere;
+    private Traceable boundObject;
     private Matrices transform; // override Traceable's transform to make it private
 
     public Group(ArrayList<Traceable> children){
         this(children, null);
     }
 
-    public Group(ArrayList<Traceable> children, Sphere boundSphere){
-        this(children, boundSphere, Matrices.identity());
+    public Group(ArrayList<Traceable> children, Traceable boundObject){
+        this(children, boundObject, Matrices.identity());
     }
 
-    public Group(ArrayList<Traceable> children, Sphere boundSphere, Matrices transform){
+    public Group(ArrayList<Traceable> children, Traceable boundObject, Matrices transform){
         this.transform = transform;
         this.setChildren(children);
-        if (boundSphere != null){
-            this.setBoundSphere(boundSphere);
+        if (boundObject != null){
+            this.setBoundObject(boundObject);
         }
     };
 
@@ -27,12 +27,12 @@ public class Group extends Traceable{
         // NOTE: since we assume that all objects' transforms have been updated,
         // we don't need to transform the ray here.
 
-        // if there's a bounding sphere, check if the ray intersects it
-        if (this.boundSphere != null){
-            ArrayList<Intersection> bsIntersections = this.boundSphere.intersections(r);
-            if (bsIntersections.size() == 0){ // if there's no intersection, return empty list
+        // if there's a bounding object, check if the ray intersects it
+        if (this.boundObject != null){
+            ArrayList<Intersection> bsIntersections = this.boundObject.intersections(r);
+            if (Traceable.hit(bsIntersections) == null){ // if there's no intersection, return empty list
                 return new ArrayList<Intersection>();
-            } // else, do normal intersection test
+            }
         }
 
         ArrayList<Intersection> ans = new ArrayList<Intersection>();
@@ -53,18 +53,18 @@ public class Group extends Traceable{
         }
     }
 
-    public void setBoundSphere(Sphere boundSphere){
+    public void setBoundObject(Traceable boundObject){
         // Set the bounding sphere of this group, and update its transform.
-        this.boundSphere = boundSphere;
-        this.boundSphere.transform = Matrices.mult(this.transform, this.boundSphere.transform);
+        this.boundObject = boundObject;
+        this.boundObject.transform = Matrices.mult(this.transform, this.boundObject.transform);
     }
 
     public void setTransform(Matrices m){
         // Set the transform of this group, and update the transforms of its children and bounding sphere.
         this.transform = m;
         this.setChildren(this.children);
-        if (this.boundSphere != null){
-            this.setBoundSphere(this.boundSphere);
+        if (this.boundObject != null){
+            this.setBoundObject(this.boundObject);
         }
     }
 
@@ -80,8 +80,8 @@ public class Group extends Traceable{
 	}
 
     public static void main(String[] args){
-        Group.testBoundSphere();
-        // Group.testIntersections();
+        // Group.testBoundObject();
+        Group.testIntersections();
     }
 
     public static void testIntersections(){
@@ -95,8 +95,12 @@ public class Group extends Traceable{
         ArrayList<Traceable> children = new ArrayList<Traceable>();
         children.add(s); children.add(c);
 
+        // bounding cube
+        Cube bc = new Cube();
+        bc.transform = Matrices.mult(Transformations.getTranslate(0, 1, 0), Transformations.getScale(1, 2, 1));
+
         // make a group with these traceables
-        Group g = new Group(children);
+        Group g = new Group(children, bc);
 
         // test with untransformed group
         System.out.println("Group at origin");
@@ -108,9 +112,10 @@ public class Group extends Traceable{
         Group.intersTestSuite(g);
     }
 
-    public static void testBoundSphere(){
+    public static void testBoundObject(){
         Sphere bs = new Sphere();
         bs.transform = Transformations.getScale(3, 3, 3);
+        bs.transform = Transformations.getScale(1.1, 2.2, 1.1);
 
         Cube c1 = new Cube();
         c1.transform = Transformations.getTranslate(0, 0.5, 0);
