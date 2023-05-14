@@ -17,10 +17,10 @@ public class SmoothTriangle extends Triangle {
 		Vector smoothNormal = new Vector(
 			Tuple.add(
 				Tuple.add(
-					vx.scale(u),
-					vy.scale(v)
+					vx.scale(w),
+					vy.scale(u)
 				),
-				vz.scale(w)
+				vz.scale(v)
 			)
 		);
 		return smoothNormal.normalize();
