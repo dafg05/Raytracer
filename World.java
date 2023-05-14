@@ -49,7 +49,7 @@ public class World {
 		Canvas cav = new Canvas(hsize, vsize);
 		cav.maxColorValue = 0;
 		Point center = new Point(0, 0, 2);
-		double sqrtRPP = 1; // sqrt(rays per pixel)
+		double sqrtRPP = 2; // sqrt(rays per pixel)
 		for (int i = 0; i < hsize; i++) {
 			for (int j = 0; j < vsize; j++) {
 
@@ -229,12 +229,12 @@ public class World {
 
 		add(back);
 
-		// PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(-1.0, -1.0, 4.0));
-		// addLight(plight);
+		PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(-1.0, -1.0, 4.0));
+		addLight(plight);
 
-		RectangularLight rlight = new RectangularLight(new MyColor(1.0, 1.0, 1.0), new Point(-0.5, -0.5, 4.0),
-				new Vector(-0.5, 0.0, 0), new Vector(0, -0.5, 0), 4, 4);
-		addLight(rlight);
+		// RectangularLight rlight = new RectangularLight(new MyColor(1.0, 1.0, 1.0), new Point(-0.5, -0.5, 4.0),
+		// 		new Vector(-0.5, 0.0, 0), new Vector(0, -0.5, 0), 4, 4);
+		// addLight(rlight);
 
 	}
 
