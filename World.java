@@ -153,7 +153,7 @@ public class World {
 		World w = new World();
 		// w.mirrors();
 		w.teapot();
-		w.render("test102.ppm", 800, 800, 15);
+		w.render("test102.ppm", 500, 500, 15);
 	}
 
 	public void mySetup() {
@@ -207,6 +207,18 @@ public class World {
 		for (Traceable tr : teaPot){
 			add(tr);
 		}
+
+		Sphere ball = new Sphere();
+		ball.transform = Matrices.mult(
+				Transformations.getTranslate(0, 0, 0),
+				Transformations.getScale(0.5, 0.5, 0.5));
+		ball.material = new Material();
+		ball.material.color = new MyColor(0, 1, 1);
+		ball.material.diffuse = 0.7;
+		ball.material.specular = 0.4;
+		ball.material.ambient = 0.6;
+		add(ball);
+
 		PointLight plight = new PointLight(new MyColor(1.0, 1.0, 1.0), new Point(0.0, 0.0, 3.0));
 		addLight(plight);
 
