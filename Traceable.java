@@ -31,6 +31,19 @@ public abstract class Traceable {
 
 	}
 
+	public static ArrayList<Intersection> positveIntersections(ArrayList<Intersection> result) {
+		/*
+		 * Filters out negative intersections
+		 */
+		ArrayList<Intersection> ans = new ArrayList<Intersection>();
+		for (Intersection inter: result){
+			if (inter.t > 0){
+				ans.add(inter);
+			}
+		}
+		return ans;
+	}
+
 
 	//merges two Intersection Lists  
 	public static ArrayList<Intersection> mergeInters(ArrayList<Intersection> rightxs,

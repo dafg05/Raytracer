@@ -30,11 +30,12 @@ public class RectangularLight extends LightSource {
                 Point samplePoint = this.getSamplePoint(i, j);
                 // use a perturbed point for shadow calculations
                 Point perturbedPoint = new Point(Tuple.add(point, scaledNormal));
-                // skip all lighting calculations if the point is shadowed
-                if (!LightSource.isShadowed(perturbedPoint, samplePoint, w)) {
+
+                MyColor shadowIntensity = this.shadowIntensity(perturbedPoint, samplePoint, w);
+		        if (!shadowIntensity.equals(MyColor.Black)){ // skip lighting calculations if point is shadowed.
                     // calculate color at samplePoint using lighting effects
-                    totalIntensity = new MyColor(Tuple.add(this.lighting(samplePoint, point, unitNormal, inters), totalIntensity));
-                }
+                    totalIntensity = new MyColor(Tuple.add(this.lighting(samplePoint, point, unitNormal, inters, shadowIntensity), totalIntensity));
+		        }
             }
         }
         // actual intensity will be the average of all sample intensities
@@ -63,8 +64,6 @@ public class RectangularLight extends LightSource {
     }
 
     private Point getSamplePoint(int i, int j) {
-        // TODO: write a main class and test
-
         return new Point(Tuple.add(this.position, Tuple.add(this.widthVector.scale((i + Math.random())/this.widthSamples), this.heightVector.scale((j + Math.random())/this.heightSamples))));
     }
 }

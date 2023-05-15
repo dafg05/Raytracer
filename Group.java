@@ -6,6 +6,7 @@ public class Group extends Traceable{
     private ArrayList<Traceable> children;
     private Traceable boundObject;
     private Matrices transform; // override Traceable's transform to make it private
+    private Material material;
 
     public Group(ArrayList<Traceable> children){
         this(children, null);
@@ -16,12 +17,21 @@ public class Group extends Traceable{
     }
 
     public Group(ArrayList<Traceable> children, Traceable boundObject, Matrices transform){
+   
+        this(children, boundObject, transform, null);
+    };
+
+    public Group(ArrayList<Traceable> children, Traceable boundObject, Matrices transform, Material material){
         this.transform = transform;
         this.setChildren(children);
         if (boundObject != null){
             this.setBoundObject(boundObject);
         }
-    };
+
+        if (material != null){
+            this.setMaterial(material);
+        }
+    }
 
     public ArrayList<Intersection> local_intersect(Ray r){
         // NOTE: since we assume that all objects' transforms have been updated,
@@ -65,6 +75,14 @@ public class Group extends Traceable{
         this.setChildren(this.children);
         if (this.boundObject != null){
             this.setBoundObject(this.boundObject);
+        }
+    }
+
+    public void setMaterial(Material material){
+        // Set the material of this group, and update the materials of its children.
+        this.material = material;
+        for (Traceable child : this.children){
+            child.material = this.material;
         }
     }
 

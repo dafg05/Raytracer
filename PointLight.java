@@ -14,11 +14,18 @@ public class PointLight extends LightSource{
         Vector scaledNormal = unitNormal.scale(w.perturbation);
 		// use a perturbed point for shadow calculations
 		Point perturbedPoint = new Point(Tuple.add(point, scaledNormal));
-		// skip all lighting calculations if the point is shadowed
-		if (!LightSource.isShadowed(perturbedPoint, this.position, w)) {
-			// calculate color at samplePoint using lighting effects
-			actualIntensity = this.lighting(this.position, point, unitNormal, inters);
+		// // skip all lighting calculations if the point is shadowed
+		// if (!LightSource.isShadowed(perturbedPoint, this.position, w)) {
+		// 	// calculate color at samplePoint using lighting effects
+		// 	actualIntensity = this.lighting(this.position, point, unitNormal, inters, this.intensity);
+		// }
+
+		MyColor shadowIntensity = this.shadowIntensity(perturbedPoint, this.position, w);
+		if (shadowIntensity.equals(MyColor.Black)){ // skip lighting calculations if point is shadowed.
+			return MyColor.Black;
 		}
+		actualIntensity = this.lighting(this.position, point, unitNormal, inters, shadowIntensity);
+
 		return actualIntensity;
 	}
 

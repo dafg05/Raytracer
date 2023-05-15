@@ -96,7 +96,7 @@ In main method of World.java, call one of the setup methods listed at the bottom
 
 Default settings:
 
-* setup = teapot() ; change in `main()` of *World.java*, by deleting the line that says `w.teapot()` and replacing with another setup method; e.g. w.
+* setup = teapot() ; change in `main()` of *World.java*, by deleting the line that says `w.teapot()` and replacing with another setup method; e.g. `w.mirrors()`
 * `sqrtRPP = 1` ; change at `render()` in *World.java*.
 * `hsize = 500` and `wsize = 500`; change `render() ` parameters of `main()` of World.java.
 * filename = "test001.ppm" ; change `render() ` filename parameter of `main()` of World.java.
