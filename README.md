@@ -1,6 +1,6 @@
 # FINAL PROJECT: RAY TRACER
 
-## Features I added
+## Features I added for my final iteration
 
 ### 1. Multiple light sources
 
